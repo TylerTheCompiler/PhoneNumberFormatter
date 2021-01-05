@@ -1,70 +1,82 @@
-#RMPhoneFormat
+# PhoneNumberFormatter (forked from RMPhoneFormat)
 
-RMPhoneFormat provides a simple to use class for formatting and validating phone numbers in iOS apps. The formatting should replicate what you would see in the Contacts app for the same phone number.
+(This is a Swift-based version of RMPhoneFormat, an awesome phone number formatting class made by Rick Maddy many years ago.)
 
-The included sample project demonstrates how to use the formatting class to setup a text field that formats itself as the user types in a phone number. While the sample app is for iOS, the RMPhoneFormat class should work as-is under OS X.
+PhoneNumberFormatter provides a simple to use class for formatting and validating phone numbers in iOS apps. The formatting should replicate what you would see in the Contacts app for the same phone number.
 
-##Setup
+The included sample project demonstrates how to use the formatting class to setup a text field that formats itself as the user types in a phone number. While the sample app is for iOS, the PhoneNumberFormatter class should work as-is under macOS.
 
-This class depends on a copy of an Apple provided private framework file named Default.phoneformat being copied into the app's resource bundle and named PhoneFormats.dat.
+## Setup
 
-The Default.phoneformat file can be located in:
+This class depends on a copy of an Apple-provided private framework file named CorePhoneNumbers.ruleset being copied into the app's resource bundle.
 
-    /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator<version>.sdk/System/Library/PrivateFrameworks/AppSupport.framework
+The CorePhoneNumbers.ruleset file is found at:
 
-where \<version\> is the version of the iPhone SDK installed. It is recommended that you use the one from 6.0.
+    /System/Library/PrivateFrameworks/CorePhoneNumbers.framework/Versions/A/Resources/CorePhoneNumbers.ruleset
 
-Add RMPhoneFormat.m and RMPhoneFormat.h to your own project. These files use ARC. If your project is not using ARC then you must add the -fobjc-arc flag to the RMPhoneFormat.m file. Select your target in Xcode. Select the Build Phases tab. Open the Compile Sources pane. Select RMPhoneFormat.m and press Enter. Add -fobjc-arc in the popup window so it appears in the Compiler Flags column.
+Add PhoneNumberFormatter.swift to your own project, as well as the above CorePhoneNumbers.ruleset file (or use a Build Phase run script to automatically copy it from the above address to your project, like the example project does).
 
-##Usage
+## Usage
 
 In its simplest form you do the following:
 
-    RMPhoneFormat *fmt = [[RMPhoneFormat alloc] init];
+    let formatter = PhoneNumberFormatter()
     // Call any number of times
-    NSString *numberString = // the phone number to format
-    NSString *formattedNumber = [fmt format:numberString];
+    let numberString = // the phone number to format
+    let formattedNumber = formatter.format(phoneNumber: numberString)
 
-You can also pass in a specific default country code if you don't want to rely on the Region Format setting. Pass in a valid ISO 3166-1 two-letter country code in lowercase:
+You can also pass in a specific default country code if you don't want to rely on the Region Format setting. Pass in a valid ISO 3166-1 two-letter country code:
 
-    RMPhoneFormat *fmt = [[RMPhoneFormat alloc] initWithDefaultCountry:@"uk"];
+    let formatter = PhoneNumberFormatter(defaultCountry: "UK")
     // Call any number of times
-    NSString *numberString = // the phone number to format
-    NSString *formattedNumber = [fmt format:numberString];
+    let numberString = // the phone number to format
+    let formattedNumber = formatter.format(phoneNumber: numberString)
 
 You may also use the singleton interface if desired:
 
-    RMPhoneFormat *fmt = [RMPhoneFormat instance];
+    let formatter = PhoneNumberFormatter.shared
     // Call any number of times
-    NSString *numberString = // the phone number to format
-    NSString *formattedNumber = [fmt format:numberString];
+    let numberString = // the phone number to format
+    let formattedNumber = formatter.format(phoneNumber: numberString)
 
 To validate a phone number you can do the following:
 
-    RMPhoneFormat *fmt = [[RMPhoneFormat alloc] init];
+    let formatter = PhoneNumberFormatter()
     // Call any number of times
-    NSString *numberString = // the phone number to validate
-    BOOL valid = [fmt isPhoneNumberValid:fmt];
+    let numberString = // the phone number to validate
+    let isValid = formatter.isPhoneNumberValid(phoneNumber: numberString)
     
 The phone number to validate can include formatting characters or not. The number will be valid if there are an appropriate set of digits.
 
-RMPhoneFormat can also be used to lookup a country's calling code:
+PhoneNumberFormatter can also be used to look up a country's calling code:
 
-    RMPhoneFormat *fmt = [RMPhoneFormat instance];
-    NSString *callingCode = [fmt callingCodeForCountryCode:@"AU"]; // Australia - returns 61
-    NSString *defaultCallingCode = [fmt defaultCallingCode]; // based on current Region Format (locale)
+    let formatter = PhoneNumberFormatter.shared
+    let callingCode = formatter.callingCode(forCountryCode: "AU") // Australia - returns 61
+    let defaultCallingCode = formatter.defaultCallingCode // based on current Region Format (locale)
 
-##Notes
+PhoneNumberFormatter can also be used to format a `UITextField` as the user is typing into it. To do this, in your text field delegate's `textField(_:shouldChangeCharactersIn:replacementString:)` method, return that value returned from your phone number formatter's `formatText(of:replacementString:validPhoneNumberHandler:)` method, passing in your text field and the replacement string given to you by the delegate method:
 
-See the comments in RMPhoneFormat.m for additional details.
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+        return yourPhoneNumberFormatter.formatText(of: textField, replacementString: string) { isValidPhoneNumber in
+            textField.textColor = isValidPhoneNumber ? .label : .red
+        }
+    }
 
-Please note that the format of the Default.phoneformat file is undocumented. There are aspects to this file that are not yet understood. This means that some phone numbers in some countries may not be formatted correctly.
+The optional closure passed into `validPhoneNumberHandler` of the above method may be used to update your UI to reflect whether the phone number is valid or not as the user is typing it. In the above example, the text field's text color becomes red if the phone number is not valid, and becomes the normal text color otherwise.
 
-##Issues
+## Notes
 
-If you encounter an issue where a phone number is formatted differently with RMPhoneFormat than the Contacts app, please let me know. Be sure to provide the phone number, the output from RMPhoneFormat, the output shown in Contacts, and the Region Format setting from the Settings app.
+See the comments in PhoneNumberFormatter.swift for additional details.
 
-##License
+Please note that the format of the CorePhoneNumbers.ruleset file is undocumented. There are aspects to this file that are not yet understood. This means that some phone numbers in some countries may not be formatted correctly.
+
+## Issues
+
+If you encounter an issue where a phone number is formatted differently with PhoneNumberFormatter than the Contacts app, then create an [issue](https://github.com/TylerTheCompiler/PhoneNumberFormatter/issues). Be sure to provide the phone number, the output from PhoneNumberFormatter, the output shown in Contacts, and the Region Format setting from the Settings app.
+
+## License
     Copyright (c) 2012, Rick Maddy
     All rights reserved.
 
