@@ -1,6 +1,6 @@
 # PhoneNumberFormatter (forked from RMPhoneFormat)
 
-(This is a Swift-based version of RMPhoneFormat, an awesome phone number formatting class made by Rick Maddy many years ago.)
+(This is a Swift-based version of [RMPhoneFormat](https://github.com/rmaddy/RMPhoneFormat), an awesome phone number formatting class made by Rick Maddy many years ago.)
 
 PhoneNumberFormatter provides a simple to use class for formatting and validating phone numbers in iOS apps. The formatting should replicate what you would see in the Contacts app for the same phone number.
 
