@@ -29,7 +29,7 @@ import UIKit
 /// A formatter that can format a string into a country-specific phone number.
 public class PhoneNumberFormatter {
     
-    /// The shared phone number singleton object.
+    /// The shared phone number formatter singleton object.
     public static let shared = PhoneNumberFormatter()
     
     /// Whether the formatter allows for optional phone number prefixes or not when determining if a string is
