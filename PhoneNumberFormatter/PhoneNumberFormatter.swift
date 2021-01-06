@@ -24,7 +24,11 @@
 
 // Modified by Tyler Prevost on Jan 3, 2021
 
+import Foundation
+
+#if os(iOS)
 import UIKit
+#endif
 
 /// A formatter that can format a string into a country-specific phone number.
 public class PhoneNumberFormatter {
@@ -240,6 +244,7 @@ public class PhoneNumberFormatter {
         return info.isValidPhoneNumber(str, allowsOptionalPrefixes: allowsOptionalPrefixes)
     }
     
+    #if os(iOS)
     /// Formats a text field's text as a phone number if possible.
     ///
     /// Use this in your `UITextFieldDelegate`'s `textField(_:shouldChangeCharactersIn:replacementString:)` method to
@@ -330,6 +335,7 @@ public class PhoneNumberFormatter {
         
         return false
     }
+    #endif
     
     #if DEBUG
     /// Prints the phone number formatter to standard output.
