@@ -20,49 +20,59 @@ Add PhoneNumberFormatter.swift to your own project, as well as the above CorePho
 
 In its simplest form you do the following:
 
-    let formatter = PhoneNumberFormatter()
-    // Call any number of times
-    let numberString = // the phone number to format
-    let formattedNumber = formatter.format(phoneNumber: numberString)
+```swift
+let formatter = PhoneNumberFormatter()
+// Call any number of times
+let numberString = // the phone number to format
+let formattedNumber = formatter.format(phoneNumber: numberString)
+```
 
 You can also pass in a specific default country code if you don't want to rely on the Region Format setting. Pass in a valid ISO 3166-1 two-letter country code:
 
-    let formatter = PhoneNumberFormatter(defaultCountry: "UK")
-    // Call any number of times
-    let numberString = // the phone number to format
-    let formattedNumber = formatter.format(phoneNumber: numberString)
+```swift
+let formatter = PhoneNumberFormatter(defaultCountry: "UK")
+// Call any number of times
+let numberString = // the phone number to format
+let formattedNumber = formatter.format(phoneNumber: numberString)
+```
 
 You may also use the singleton interface if desired:
 
-    let formatter = PhoneNumberFormatter.shared
-    // Call any number of times
-    let numberString = // the phone number to format
-    let formattedNumber = formatter.format(phoneNumber: numberString)
+```swift
+let formatter = PhoneNumberFormatter.shared
+// Call any number of times
+let numberString = // the phone number to format
+let formattedNumber = formatter.format(phoneNumber: numberString)
+```
 
 To validate a phone number you can do the following:
 
-    let formatter = PhoneNumberFormatter()
-    // Call any number of times
-    let numberString = // the phone number to validate
-    let isValid = formatter.isPhoneNumberValid(phoneNumber: numberString)
+```swift
+let formatter = PhoneNumberFormatter()
+// Call any number of times
+let numberString = // the phone number to validate
+let isValid = formatter.isPhoneNumberValid(phoneNumber: numberString)
+```
     
 The phone number to validate can include formatting characters or not. The number will be valid if there are an appropriate set of digits.
 
 PhoneNumberFormatter can also be used to look up a country's calling code:
 
-    let formatter = PhoneNumberFormatter.shared
-    let callingCode = formatter.callingCode(forCountryCode: "AU") // Australia - returns 61
-    let defaultCallingCode = formatter.defaultCallingCode // based on current Region Format (locale)
+```swift
+let formatter = PhoneNumberFormatter.shared
+let callingCode = formatter.callingCode(forCountryCode: "AU") // Australia - returns 61
+let defaultCallingCode = formatter.defaultCallingCode // based on current Region Format (locale)
+```
 
 PhoneNumberFormatter can also be used to format a `UITextField` as the user is typing into it. To do this, in your text field delegate's `textField(_:shouldChangeCharactersIn:replacementString:)` method, return that value returned from your phone number formatter's `formatText(of:replacementString:validPhoneNumberHandler:)` method, passing in your text field and the replacement string given to you by the delegate method:
 
-    func textField(_ textField: UITextField,
-                   shouldChangeCharactersIn range: NSRange,
-                   replacementString string: String) -> Bool {
-        return yourPhoneNumberFormatter.formatText(of: textField, replacementString: string) { isValidPhoneNumber in
-            textField.textColor = isValidPhoneNumber ? .label : .red
-        }
+```swift
+func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    return yourPhoneNumberFormatter.formatText(of: textField, replacementString: string) { isValidPhoneNumber in
+        textField.textColor = isValidPhoneNumber ? .label : .red
     }
+}
+```
 
 The optional closure passed into `validPhoneNumberHandler` of the above method may be used to update your UI to reflect whether the phone number is valid or not as the user is typing it. In the above example, the text field's text color becomes red if the phone number is not valid, and becomes the normal text color otherwise.
 
